@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { withTranslation } from 'react-i18next';
-
 import * as IDEActions from '../actions/ide';
 import * as FileActions from '../actions/files';
 import DownArrowIcon from '../../../images/down-filled-triangle.svg';
@@ -184,14 +183,25 @@ class FileNode extends React.Component {
     const hasEmptyFilename = updatedName.trim() === '';
     const hasOnlyExtension =
       newFileExtension && updatedName.trim() === newFileExtension[0];
+
     if (
       hasEmptyFilename ||
       hasNoExtension ||
-      notSameExtension ||
       hasOnlyExtension ||
       hasExtensionIfFolder
     ) {
       this.setUpdatedName(currentName);
+    } else if (notSameExtension) {
+      const userResponse = window.confirm(
+        'Are you sure you want to change the file extension?'
+      );
+      console.log('userResponse', userResponse);
+
+      if (userResponse) {
+        this.saveUpdatedFileName();
+      } else {
+        this.setUpdatedName(currentName);
+      }
     } else {
       this.saveUpdatedFileName();
     }
